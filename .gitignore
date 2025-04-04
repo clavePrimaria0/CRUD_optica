@@ -1,0 +1,36 @@
+# Ignorar archivo de configuración de Firebase con credenciales
+firebase-config.js
+.env
+
+# Directorios de dependencias
+node_modules/
+bower_components/
+
+# Archivos de construcción
+dist/
+build/
+out/
+
+# Cachés y logs
+.cache/
+.log/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Directorios y archivos del sistema
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Archivos de configuración local
+*.local
+
+# Archivos generados automáticamente
+.vercel
+.netlifyfirebase-config.js

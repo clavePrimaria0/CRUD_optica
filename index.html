@@ -1,1 +1,127 @@
-<script>alert('Hola mundo!')</script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Cargar primero la configuración -->
+  <script src="firebase-config.js"></script>
+  
+  <!-- Componentes -->
+  <script src="header-component.js"></script>
+  <script src="firebase-component.js"></script>
+  
+  <header-component></header-component>
+  <title>Iniciar Sesión Óptica X</title>
+  
+  <!-- Cargar Bootstrap JS explícitamente aquí -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Componente de Firebase -->
+  <firebase-component id="firebase"></firebase-component>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+          <div class="card-body p-4">
+            <h2 class="card-title text-center text-primary mb-4">Iniciar Sesión</h2>
+            
+            <!-- Formulario de login -->
+            <form id="login-form">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" required placeholder="Ingresa tu correo electrónico">
+              </div>
+              
+              <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-group">
+                  <input type="password" id="password" class="form-control" required placeholder="Ingresa tu contraseña">
+                  <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="text-end mb-3">
+                <button type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
+              
+              <div id="auth-error" class="alert alert-danger d-none mb-3"></div>
+              
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                <button type="button" id="register-btn" class="btn btn-outline-secondary">Crear cuenta</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Registro -->
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="registerModalLabel">Crear nueva cuenta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="register-form">
+            <div class="mb-3">
+              <label for="register-name" class="form-label">Nombre completo</label>
+              <input type="text" class="form-control" id="register-name" placeholder="Ingresa tu nombre completo">
+            </div>
+            <div class="mb-3">
+              <label for="register-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="register-email" required placeholder="Ingresa tu correo electrónico">
+            </div>
+            <div class="mb-3">
+              <label for="register-password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="register-password" required placeholder="Mínimo 6 caracteres">
+            </div>
+            <div id="register-error" class="alert alert-danger d-none mb-3"></div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Registrarse</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Olvidé mi Contraseña -->
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="forgotPasswordModalLabel">Recuperar contraseña</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="forgot-password-form">
+            <div class="mb-3">
+              <label for="forgot-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="forgot-email" required placeholder="Ingresa tu correo electrónico">
+              <div class="form-text">Te enviaremos un enlace para restablecer tu contraseña.</div>
+            </div>
+            <div id="forgot-error" class="alert alert-danger d-none mb-3"></div>
+            <div id="forgot-success" class="alert alert-success d-none mb-3">
+              Hemos enviado un enlace a tu correo electrónico para restablecer tu contraseña.
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Enviar enlace</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Script principal - Asegúrate de cargarlo después de los scripts de Bootstrap -->
+  <script src="optica.js"></script>
+</body>
+</html>

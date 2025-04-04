@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Cargar primero la configuración -->
+  <script src="firebase-config.js"></script>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Componentes -->
+  <script src="firebase-component.js"></script>
+  
+  <title>Panel de Control - Óptica X</title>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>
+</head>
+<body class="bg-light">
+  <!-- Componente de Firebase -->
+  <firebase-component id="firebase"></firebase-component>
+
+  <!-- Barra de navegación superior -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <i class="bi bi-eyeglasses me-2"></i>Óptica X
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">
+              <i class="bi bi-house-door"></i> Inicio
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="home.html">
+              <i class="bi bi-speedometer2"></i> Panel
+            </a>
+          </li>
+        </ul>
+        
+        <!-- Dropdown de usuario en la barra de navegación -->
+        <div class="dropdown">
+          <a class="btn btn-primary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+              <span id="nav-user-initial">R</span>
+            </div>
+            <span id="nav-user-name" class="d-none d-sm-inline">Usuario</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person-circle"></i> Mi perfil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" id="logout-btn"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+    <!-- Tarjeta de información del usuario -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px; font-size: 24px;">
+            <span id="user-initial">R</span>
+          </div>
+          <div class="flex-grow-1">
+            <h5 id="user-name" class="mb-0">Usuario</h5>
+            <div id="user-email" class="text-muted">renzomogra@gmail.com</div>
+            <div><span class="badge bg-success">Activo</span></div>
+          </div>
+          <button id="logout-btn-card" class="btn btn-danger">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Búsqueda y filtros -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-md-7">
+            <div class="input-group">
+              <span class="input-group-text">Buscar:</span>
+              <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre, apellido o DNI...">
+            </div>
+          </div>
+          <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <button class="btn btn-outline-primary" id="btnFiltroFechas">
+              <i class="bi bi-calendar3"></i> Filtro Fechas
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Botones de acción en el lado izquierdo -->
+      <div class="col-md-3 mb-4">
+        <div class="d-grid gap-3">
+          <button class="btn btn-primary btn-lg py-3" id="btnCrearCliente">
+            <i class="bi bi-plus-circle fs-4"></i><br>
+            <span class="fs-5">+ Crear</span>
+          </button>
+          
+          <button class="btn btn-outline-primary btn-lg py-3" id="btnEditarSeleccionado" disabled>
+            <i class="bi bi-pencil-square fs-4"></i><br>
+            <span class="fs-5">Editar</span>
+          </button>
+          
+          <button class="btn btn-outline-danger btn-lg py-3" id="btnEliminarSeleccionado" disabled>
+            <i class="bi bi-trash fs-4"></i><br>
+            <span class="fs-5">Eliminar</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Tabla en el lado derecho -->
+      <div class="col-md-9">
+        <div class="card shadow-sm">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered mb-0" id="clientesTable">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="text-center">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox">
+                      </div>
+                    </th>
+                    <th scope="col">Nombres</th>
+                    <th scope="col">Apellidos</th>
+                    <th scope="col">DNI</th>
+                    <th scope="col">Celular</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Monto</th>
+                  </tr>
+                </thead>
+                <tbody id="clientesTableBody">
+                  <!-- Los datos se cargarán desde Firestore -->
+                  <tr>
+                    <td colspan="8" class="text-center py-4">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                      </div>
+                      <p class="mt-2">Cargando datos...</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para crear/editar cliente -->
+  <div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clienteModalLabel">Nuevo Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="clienteForm">
+            <input type="hidden" id="clienteId">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="nombres" class="form-label">Nombres</label>
+                <input type="text" class="form-control" id="nombres" required>
+              </div>
+              <div class="col-md-6">
+                <label for="apellidos" class="form-label">Apellidos</label>
+                <input type="text" class="form-control" id="apellidos" required>
+              </div>
+              <div class="col-md-6">
+                <label for="dni" class="form-label">DNI</label>
+                <input type="text" class="form-control" id="dni">
+              </div>
+              <div class="col-md-6">
+                <label for="celular" class="form-label">Celular</label>
+                <input type="text" class="form-control" id="celular">
+              </div>
+              <div class="col-md-6">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" id="estado">
+                  <option value="0">Inactivo</option>
+                  <option value="1">Activo</option>
+                  <option value="2">Pendiente</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="fechaCompra" class="form-label">Fecha de Compra</label>
+                <input type="date" class="form-control" id="fechaCompra">
+              </div>
+              <div class="col-md-6">
+                <label for="montoCompra" class="form-label">Monto de Compra</label>
+                <input type="number" class="form-control" id="montoCompra" min="0" step="0.01">
+              </div>
+              <div class="col-md-6">
+                <label for="medidaOjoDerecho" class="form-label">Medida Ojo Derecho</label>
+                <input type="text" class="form-control" id="medidaOjoDerecho">
+              </div>
+              <div class="col-md-6">
+                <label for="medidaOjoIzquierdo" class="form-label">Medida Ojo Izquierdo</label>
+                <input type="text" class="form-control" id="medidaOjoIzquierdo">
+              </div>
+              <div class="col-md-6">
+                <label for="observaciones" class="form-label">Observaciones</label>
+                <textarea class="form-control" id="observaciones" rows="3"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnGuardarCliente">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación para eliminar -->
+  <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.</p>
+          <input type="hidden" id="eliminarClienteId">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script principal -->
+  <script src="optica.js"></script>
+</body>
+</html>
